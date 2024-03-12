@@ -1,0 +1,128 @@
+{
+  "name": "singleFollower (Custom)",
+  "shortDescription": "singleFollower (Custom)",
+  "longDescription": "<p>Custom robot created in the configurator.</p>",
+  "longerDescription": "<h3>#robot-dimensions#</h3><ul><li>#robot-wheelDiameter#: 5.6 cm</li><li>#robot-wheelSpacing#: 9.2 cm</li></ul><h3>#robot-actuators#</h3><ul><li>#robot-port# A : #robot-leftWheel#</li><li>#robot-port# B : #robot-rightWheel#</li></ul><h3>#robot-sensors#</h3><ul><li>#robot-port# 1 : #robot-color#</li><li>#robot-port# 2 : #robot-ultrasonic#</li><li>#robot-port# 3 : #robot-gyro#</li><li>#robot-port# 4 : #robot-pen#</li></ul>",
+  "thumbnail": "",
+  "bodyHeight": 4,
+  "bodyWidth": 8,
+  "bodyLength": 16,
+  "wheels": true,
+  "wheelDiameter": 5.6,
+  "wheelWidth": 0.8,
+  "wheelToBodyOffset": 0.2,
+  "bodyEdgeToWheelCenterY": 1,
+  "bodyEdgeToWheelCenterZ": 2,
+  "bodyMass": 1000,
+  "wheelMass": 200,
+  "casterMass": 0,
+  "caster": true,
+  "wheelFriction": 10,
+  "bodyFriction": 0,
+  "casterFriction": 0,
+  "color": "#80ff00ff",
+  "imageType": "all",
+  "imageURL": "",
+  "components": [
+    {
+      "type": "ColorSensor",
+      "position": [
+        0,
+        0,
+        12
+      ],
+      "rotation": [
+        1.5707963267948966,
+        0,
+        0
+      ],
+      "options": {}
+    },
+    {
+      "type": "UltrasonicSensor",
+      "position": [
+        5,
+        2.8,
+        0
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "options": {
+        "rayLength": 255
+      }
+    },
+    {
+      "type": "GyroSensor",
+      "position": [
+        -4,
+        4.8,
+        3
+      ],
+      "options": {}
+    },
+    {
+      "type": "Pen",
+      "position": [
+        0,
+        0,
+        6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "options": {}
+    },
+    {
+      "type": "Box",
+      "position": [
+        0,
+        1,
+        9
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "options": {
+        "height": 1,
+        "width": 1,
+        "depth": 4,
+        "color": "#2bff00ff",
+        "imageType": "repeat",
+        "imageURL": "",
+        "uScale": 1,
+        "vScale": 1
+      }
+    },
+    {
+      "type": "Box",
+      "position": [
+        0,
+        3,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "options": {
+        "height": 3,
+        "width": 8,
+        "depth": 10,
+        "color": "#808080ff",
+        "imageType": "repeat",
+        "imageURL": "",
+        "uScale": 1,
+        "vScale": 1
+      }
+    }
+  ],
+  "options": {}
+}
