@@ -345,7 +345,6 @@ def main():
         robot.move_forward(100)
         time.sleep(2)
         robot.reculerLigneDepart()
-        robot.reculerLigneDepart()
 
         
     except RobotException as r :
