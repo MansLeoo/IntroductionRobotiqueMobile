@@ -3,6 +3,7 @@ from ev3dev2.sound   import Sound
 from ev3dev2.motor import *
 from ev3dev2.sensor.lego import *
 from ev3dev2.sensor import INPUT_1, INPUT_2, INPUT_3, INPUT_4
+import time
 
 
 class RobotException(Exception):
@@ -59,7 +60,7 @@ class Robot :
         # Calibrage blanc
         self.capteurCouleur.calibrate_white
 
-    def  getCouleur(self) :
+    def getCouleur(self) :
         r,g,b = self.capteurCouleur.rgb
         return (r,g,b)
     def isCouleurNoir(self,limite) :
@@ -69,29 +70,84 @@ class Robot :
         else :
             return True
 
-    def preparationRobot(self,) :
+    def preparationRobot(self) :
         if (self.verificationCapteurCouleur()) :
             self.preparationCouleur()
         if(self.verificationGyroscope) :
             self.preparationGyroscope
     def preparationGyroscope(self) :
         self.gyroscope.calibrate()
+    def move_forward(self,distance_centimeters):
+        self.moteurGauche.run_to_rel_pos(position_sp=distance_centimeters * 5, speed_sp=500, stop_action="hold")
+        self.moteurDroite.run_to_rel_pos(position_sp=distance_centimeters * 5, speed_sp=500, stop_action="hold")
     def verificationCapteurCouleur(self) :
+        """
+        Vérifie si le capteur de couleur est défini pour l'instance Robot.
+
+        Returns:
+            bool: True si le capteur de couleur est défini, False sinon.
+        """
         return True if self.capteurCouleur is not None else False
+
     def verificationCapteurUltrason(self) :
+        """
+        Vérifie si le capteur ultrasonique est défini pour l'instance Robot.
+
+        Returns:
+            bool: True si le capteur ultrasonique est défini, False sinon.
+        """
         return True if self.capteurUltrason is not None else False
+
     def verificationMoteurDroite(self) :
+        """
+        Vérifie si le moteur droit est défini pour l'instance Robot.
+
+        Returns:
+            bool: True si le moteur droit est défini, False sinon.
+        """
         return True if self.moteurDroite is not None else False
+
     def verificationMoteurGauche(self) :
+        """
+        Vérifie si le moteur gauche est défini pour l'instance Robot.
+
+        Returns:
+            bool: True si le moteur gauche est défini, False sinon.
+        """
         return True if self.moteurGauche is not None else False
+
     def verificationBouton1(self) :
+        """
+        Vérifie si le bouton 1 est défini pour l'instance Robot.
+
+        Returns:
+            bool: True si le bouton 1 est défini, False sinon.
+        """
         return True if self.bouton1 is not None else False
+
     def verificationBouton2(self) :
-        return True if self.bouton2 is not None else False            
+        """
+        Vérifie si le bouton 2 est défini pour l'instance Robot.
+
+        Returns:
+            bool: True si le bouton 2 est défini, False sinon.
+        """
+        return True if self.bouton2 is not None else False
+
     def verificationGyroscope(self) :
-        return True if self.gyroscope is not None else False    
+        """
+        Vérifie si le gyroscope est défini pour l'instance Robot.
+
+        Returns:
+            bool: True si le gyroscope est défini, False sinon.
+        """
+        return True if self.gyroscope is not None else False
+  
     def avancerLigneDepart(self) :
-        SEUIL_NOIR = 100
+        """
+        Permet au robot d'avancer vers la première zone noire qu'il détecte.
+        """
+        SEUIL_NOIR = 200
         while( not self.isCouleurNoir(SEUIL_NOIR) ) :
             self.avancer()
             print(self.getCouleur())
@@ -102,18 +158,29 @@ class Robot :
         print("Ligne de départ traverse !")
         self.stop()
     def reculerLigneDepart(self) :
-        SEUIL_NOIR = 100
-        while( not self.isCouleurNoir(SEUIL_NOIR) ) :
-            self.reculer()
-            print(self.getCouleur())
-        print("Ligne de départ atteinte !")
-        while(self.isCouleurNoir(SEUIL_NOIR)) :
-            self.reculer()
-            print(self.getCouleur())   
-        print("Ligne de départ traverse !")
-        self.stop()
+        """
+        Permet au robot de reculer vers la première zone noire qu'il détecte,
+        tout en faisant des observation a l'aide de ses capteurs.
+        """
+        SEUIL_NOIR = 200
+        nb_ligne = 0
+        while(nb_ligne != 2) :
+            while( not self.isCouleurNoir(SEUIL_NOIR) ) :
+                self.reculer()
+                print(self.getCouleur())
+            print("Ligne de départ atteinte !")
+            while(self.isCouleurNoir(SEUIL_NOIR)) :
+                self.reculer()
+                print(self.getCouleur())   
+            print("Ligne de départ traverse !")
+            self.stop()
+            nb_ligne +=1
     def avancerLigneArrivee(self) :
-        SEUIL_NOIR = 100
+        """
+        Permet au robot d'avancer vers la seconde zone noire qu'il détecte,
+        tout en faisant des observation a l'aide de ses capteurs.
+        """
+        SEUIL_NOIR = 200
         while( not self.isCouleurNoir(SEUIL_NOIR) ) :
             # Calcul a faire (etape2)
             self.avancer()
@@ -125,45 +192,125 @@ class Robot :
         print("Ligne d'arrivée traverse !")
         self.stop()
     def get_moteurGauche(self):
+        """
+        Retourne le moteur gauche de l'instance Robot.
+
+        Returns:
+            object: Le moteur gauche.
+        """
         return self.moteurGauche
 
     def set_moteurGauche(self, value):
+        """
+        Définit le moteur gauche de l'instance Robot.
+
+        Args:
+            value (object): Le moteur gauche à définir.
+        """
         self.moteurGauche = value
 
     def get_moteurDroite(self):
+        """
+        Retourne le moteur droit de l'instance Robot.
+
+        Returns:
+            object: Le moteur droit.
+        """
         return self.moteurDroite
 
     def set_moteurDroite(self, value):
+        """
+        Définit le moteur droit de l'instance Robot.
+
+        Args:
+            value (object): Le moteur droit à définir.
+        """
         self.moteurDroite = value
 
     def get_moteurSecondaire(self):
+        """
+        Retourne le moteur secondaire (medium Motor) de l'instance Robot.
+        Returns:
+            object: Le moteur secondaire.
+        """
         return self.moteurSecondaire
 
     def set_moteurSecondaire(self, value):
+        """
+        Définit le moteur secondaire de l'instance Robot.
+
+        Args:
+            value (object): Le moteur secondaire à définir.
+        """
         self.moteurSecondaire = value
 
     def get_capteurCouleur(self):
+        """
+        Retourne le capteur de couleur de l'instance Robot.
+
+        Returns:
+            object: Le capteur de couleur.
+        """
         return self.capteurCouleur
 
     def set_capteurCouleur(self, value):
+        """
+        Retourne le capteur de couleur de l'instance Robot.
+
+        Returns:
+            object: Le capteur de couleur.
+        """
         self.capteurCouleur = value
 
     def get_bouton1(self):
+        """
+        Retourne le bouton 1 de l'instance Robot.
+
+        Returns:
+            object: Le bouton 1.
+        """
         return self.bouton1
 
     def set_bouton1(self, value):
+        """
+        Définit le bouton 1 de l'instance Robot.
+
+        Args:
+            value (object): Le bouton 1 à définir.
+        """
         self.bouton1 = value
 
     def get_bouton2(self):
+        """
+        Retourne le bouton 2 de l'instance Robot.
+
+        Returns:
+            object: Le bouton 2.
+        """
         return self.bouton2
 
     def set_bouton2(self, value):
+        """
+        Définit le bouton 2 de l'instance Robot.
+
+        Args:
+            value (object): Le bouton 2 à définir.
+        """
         self.bouton2 = value
 
     def get_gyroscope(self):
+        """
+        Retourne le gyroscope de l'instance Robot.
+
+        Returns:
+            object: Le gyroscope.
+        """
         return self.gyroscope              
                 
     def avancer(self):
+        """
+        Permet au robot d'avancer tout en gardant la trajectoire a l'aide du gyroscope.
+        """
         # Lecture de l'angle actuel du gyroscope
         angle_actuel = self.gyroscope.angle
         # Calcul de la correction à appliquer aux moteurs
@@ -171,13 +318,19 @@ class Robot :
         # Utilisation de la correction pour ajuster les moteurs
         self.moteurs.on(steering=correction, speed=70)
     def reculer(self):
+        """
+        Permet au robot de reculer tout en gardant la trajectoire a l'aide du gyroscope.
+        """
         # Lecture de l'angle actuel du gyroscope
-        angle_actuel = self.gyroscope.angle
+        angle_actuel =  - self.gyroscope.angle
         # Calcul de la correction à appliquer aux moteurs
         correction = angle_actuel
         # Utilisation de la correction pour ajuster les moteurs
         self.moteurs.on(steering=correction, speed=-70)        
     def stop(self) :
+        """
+        Permet de stopper les moteurs permettant les déplacements du robot.
+        """
         self.moteurs.off()        
 
 
@@ -186,7 +339,12 @@ def main():
         robot = Robot(OUTPUT_B, OUTPUT_A, None, INPUT_1, INPUT_2,INPUT_3, None, None)
         robot.preparationRobot()
         robot.avancerLigneDepart()
+        time.sleep(1)
         robot.avancerLigneArrivee()
+        time.sleep(1)
+        robot.move_forward(100)
+        time.sleep(2)
+        robot.reculerLigneDepart()
         robot.reculerLigneDepart()
 
         
