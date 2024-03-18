@@ -336,7 +336,7 @@ class Robot :
 
 def main():
     try :
-        robot = Robot(OUTPUT_B, OUTPUT_A, None, INPUT_1, INPUT_2,INPUT_3, None, None)
+        robot = Robot(OUTPUT_B, OUTPUT_A, None, OUTPUT_C, INPUT_1,INPUT_4, None, None)
         robot.preparationRobot()
         robot.avancerLigneDepart()
         time.sleep(1)
@@ -356,6 +356,7 @@ def main():
     else :
         print("La simulation est terminée, il n'y a eu aucun problème.")
     return 0
+    #def __init__(self, L_motor1, L_motor2,M_motor,colorSensor,ultrasonSensor,giroSensor,but_1,but_2):
 
 
 
