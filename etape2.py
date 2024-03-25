@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 
 from ev3dev2.sound   import Sound
 from ev3dev2.motor import *
 from ev3dev2.sensor.lego import *
 from ev3dev2.sensor import INPUT_1, INPUT_2, INPUT_3, INPUT_4
 import time
-import sys
+import math
 
 
 class RobotException(Exception):
@@ -41,11 +40,11 @@ class Robot :
             if(M_motor != None) :
                 self.moteurSecondaire = MediumMotor(M_motor)
             if(colorSensor != None) :
-                self.capteurCouleur = ColorSensor()
+                self.capteurCouleur = ColorSensor(colorSensor)
             if(ultrasonSensor != None) :
-                self.capteurUltrason= UltrasonicSensor()
+                self.capteurUltrason= UltrasonicSensor(ultrasonSensor)
             if(giroSensor != None) :
-                self.gyroscope= GyroSensor()
+                self.gyroscope= GyroSensor(giroSensor)
             if(but_1 != None) :
                 self.bouton1 = TouchSensor(but_1)
             if(but_2 != None) :
@@ -152,20 +151,18 @@ class Robot :
         Permet au robot d'avancer vers la premiere zone noire qu'il detecte.
         """
         SEUIL_NOIR = 20
-        print(self.getCouleur())
-        sys.stdout.flush()   
         while( not self.isCouleurNoir(SEUIL_NOIR) ) :
             self.avancer()
-            print(self.getCouleur())
-            sys.stdout.flush()   
-        """
+            #print(self.getCouleur())
+            # maj position
+            self.set_position(self.position["x"]+1,self.position["y"])
+            # maj us data
+            self.us_data.append({"x":self.position["x"],"y":self.position["y"] + self.get_us_distance()})
         print("Ligne de depart atteinte !")
         while(self.isCouleurNoir(SEUIL_NOIR)) :
             self.avancer()
-            print(self.getCouleur())  
-            sys.stdout.flush()   
+            #print(self.getCouleur())   
         print("Ligne de depart traverse !")
-        """
         self.stop()
     def reculerLigneDepart(self) :
         """
@@ -177,9 +174,12 @@ class Robot :
         while(nb_ligne != 2) :
             while( not self.isCouleurNoir(SEUIL_NOIR) ) :
                 self.reculer()
-                print(self.getCouleur())
-                sys.stdout.flush()   
+                #print(self.getCouleur())
             print("Ligne de depart atteinte !")
+            while(self.isCouleurNoir(SEUIL_NOIR)) :
+                self.reculer()
+                #print(self.getCouleur())   
+            print("Ligne de depart traverse !")
             self.stop()
             nb_ligne +=1
     def avancerLigneArrivee(self) :
@@ -200,7 +200,7 @@ class Robot :
         print("Ligne d'arrivee atteinte !")
         while(self.isCouleurNoir(SEUIL_NOIR)) :
             self.avancer()
-            #print(self.getCouleur())
+            #print(self.getCouleur())   
         print("Ligne d'arrivee traverse !")
         self.stop()
     def get_moteurGauche(self):
@@ -343,17 +343,35 @@ class Robot :
         """
         Permet de stopper les moteurs permettant les deplacements du robot.
         """
-        self.moteurs.off()        
-    def smooth_data(self, data, window_size=5):
+        self.moteurs.off()
+    def set_position(self, x, y):
         """
-        Applique un filtre de moyenne mobile pour lisser les données.
+        Definit la position du robot.
 
         Args:
-            data (list): Les données à lisser.
+            x (int): La coordonnee x.
+            y (int): La coordonnee y.
+        """
+        self.position["x"] = x
+        self.position["y"] = y
+    def get_us_distance(self):
+        """
+        Retourne la distance mesuree par le capteur ultrasonique.
+
+        Returns:
+            int: La distance mesuree par le capteur ultrasonique.
+        """
+        return self.capteurUltrason.distance_centimeters
+    def smooth_data(self, data, window_size=5):
+        """
+        Applique un filtre de moyenne mobile pour lisser les donnees.
+
+        Args:
+            data (list): Les donnees a lisser.
             window_size (int): La taille de la fenêtre de moyenne mobile.
 
         Returns:
-            list: Les données lissées.
+            list: Les donnees lissees.
         """
         smoothed_data = []
         half_window = window_size // 2
@@ -364,36 +382,36 @@ class Robot :
             smoothed_data.append(smoothed_value)
         return smoothed_data
 
+
 def main():
     try :
         robot = Robot(OUTPUT_B, OUTPUT_A, None, INPUT_2, INPUT_1,INPUT_4, None, None)
-        #def __init__(self, L_motor1, L_motor2,M_motor,colorSensor,ultrasonSensor,giroSensor,but_1,but_2):
         robot.preparationCouleur()
         robot.preparationRobot()
         robot.preparationGyroscope()
         robot.avancerLigneDepart()
-        robot.move_forward(10)
-
         time.sleep(1)
+        robot.set_position(0,0)
         robot.avancerLigneArrivee()
         time.sleep(1)
         robot.move_forward(100)
         time.sleep(2)
         robot.reculerLigneDepart()
+        time.sleep(1)
+
+        # Appliquer le lissage aux donnees ultrasoniques
         smoothed_us_data = robot.smooth_data([d["y"] for d in robot.us_data])
 
-        # Mise e jour des donnees ultrasoniques lissees dans robot.us_data
-        for i in range(len(robot.us_data)):
-            robot.us_data[i]["y"] = smoothed_us_data[i]
+        # Mise a jour des donnees ultrasoniques lissees dans robot.us_data
 
         # arrondir les valeurs de us_data
         for i in range(len(robot.us_data)) :
             robot.us_data[i]["x"] = round(robot.us_data[i]["x"])
             robot.us_data[i]["y"] = round(robot.us_data[i]["y"])
-            print(robot.us_data[i]["y"])
+            #print(robot.us_data[i]["y"])
 
         # Des que y est different ( 10 deecart) on ajoute un point
-
+        
 
 
 
@@ -406,12 +424,12 @@ def main():
                 max_x = robot.us_data[i]["x"]
 
 
-
+        
 
 
         print("max y : " + str(max_y))
         print("max x : " + str(max_x))
-        print("Matrice de la carte")
+        print("Matrice de la carte :")
 
 
         # Creer une matrice de Max-robot.positionX et Max-us_dataY et remplir avec des X aux positions us_data et des . aux autres positions
@@ -428,6 +446,16 @@ def main():
             for l in range(len(matrice)) :
                 f.write(str(matrice[l]) + "\n")
         
+            
+        
+
+
+                
+
+
+            
+
+        
     except RobotException as r :
         print("Il y a eu un probleme avec le Robot. Arret de la simulation.")
         print(str(r))
@@ -437,6 +465,7 @@ def main():
     else :
         print("La simulation est terminee, il n'y a eu aucun probleme.")
     return 0
+
 
 
 
