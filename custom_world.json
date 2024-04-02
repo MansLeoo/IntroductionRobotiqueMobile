@@ -24,6 +24,42 @@
       {
         "type": "box",
         "position": [
+          11,
+          135,
+          14.999999999999998
+        ],
+        "rotationMode": "degrees",
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "animationMode": "none",
+        "animationKeys": [],
+        "size": [
+          5.5,
+          9,
+          19.5
+        ],
+        "modelURL": "",
+        "modelScale": 10,
+        "modelAnimation": "None",
+        "color": "#0008ffff",
+        "imageType": "repeat",
+        "imageURL": "",
+        "uScale": 1,
+        "vScale": 1,
+        "physicsOptions": "moveable",
+        "magnetic": false,
+        "laserDetection": null,
+        "ultrasonicDetection": null,
+        "receiveShadows": false,
+        "castShadows": false,
+        "isPickable": true
+      },
+      {
+        "type": "box",
+        "position": [
           49,
           100,
           14.999999999999998
@@ -37,9 +73,9 @@
         "animationMode": "none",
         "animationKeys": [],
         "size": [
-          10,
-          15,
-          30
+          5.5,
+          9,
+          19.5
         ],
         "modelURL": "",
         "modelScale": 10,
@@ -60,7 +96,7 @@
       {
         "type": "box",
         "position": [
-          21,
+          65,
           150,
           14.999999999999998
         ],
@@ -73,9 +109,9 @@
         "animationMode": "none",
         "animationKeys": [],
         "size": [
-          10,
-          15,
-          30
+          5.5,
+          9,
+          19.5
         ],
         "modelURL": "",
         "modelScale": 10,
@@ -94,11 +130,11 @@
         "isPickable": true
       },
       {
-        "type": "box",
+        "type": "cylinder",
         "position": [
-          76,
-          180,
-          14.999999999999998
+          11,
+          137,
+          25
         ],
         "rotationMode": "degrees",
         "rotation": [
@@ -109,19 +145,235 @@
         "animationMode": "none",
         "animationKeys": [],
         "size": [
-          10,
-          15,
-          30
+          1.5,
+          3,
+          3
         ],
         "modelURL": "",
         "modelScale": 10,
         "modelAnimation": "None",
-        "color": "#0008ffff",
-        "imageType": "repeat",
+        "color": "#80E680",
+        "imageType": "cylinder",
         "imageURL": "",
         "uScale": 1,
         "vScale": 1,
         "physicsOptions": "moveable",
+        "magnetic": false,
+        "laserDetection": null,
+        "ultrasonicDetection": null,
+        "receiveShadows": false,
+        "castShadows": false,
+        "isPickable": true
+      },
+      {
+        "type": "cylinder",
+        "position": [
+          49,
+          102,
+          25
+        ],
+        "rotationMode": "degrees",
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "animationMode": "none",
+        "animationKeys": [],
+        "size": [
+          1.5,
+          3,
+          3
+        ],
+        "modelURL": "",
+        "modelScale": 10,
+        "modelAnimation": "None",
+        "color": "#80E680",
+        "imageType": "cylinder",
+        "imageURL": "",
+        "uScale": 1,
+        "vScale": 1,
+        "physicsOptions": "moveable",
+        "magnetic": false,
+        "laserDetection": null,
+        "ultrasonicDetection": null,
+        "receiveShadows": false,
+        "castShadows": false,
+        "isPickable": true
+      },
+      {
+        "type": "cylinder",
+        "position": [
+          65,
+          152,
+          25
+        ],
+        "rotationMode": "degrees",
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "animationMode": "none",
+        "animationKeys": [],
+        "size": [
+          1.5,
+          3,
+          3
+        ],
+        "modelURL": "",
+        "modelScale": 10,
+        "modelAnimation": "None",
+        "color": "#80E680",
+        "imageType": "cylinder",
+        "imageURL": "",
+        "uScale": 1,
+        "vScale": 1,
+        "physicsOptions": "moveable",
+        "magnetic": false,
+        "laserDetection": null,
+        "ultrasonicDetection": null,
+        "receiveShadows": false,
+        "castShadows": false,
+        "isPickable": true
+      },
+      {
+        "type": "model",
+        "position": [
+          130.04613964177366,
+          147.56923784278607,
+          5
+        ],
+        "rotationMode": "degrees",
+        "rotation": [
+          0,
+          170,
+          0
+        ],
+        "animationMode": "none",
+        "animationKeys": [],
+        "size": [
+          10,
+          10,
+          10
+        ],
+        "modelURL": "models/Kenny.nl - Racer/barrierWhite.glb",
+        "modelScale": 95,
+        "modelAnimation": "None",
+        "color": "#80E680",
+        "imageType": "sphere",
+        "imageURL": "",
+        "uScale": 1,
+        "vScale": 1,
+        "physicsOptions": "fixed",
+        "magnetic": false,
+        "laserDetection": null,
+        "ultrasonicDetection": null,
+        "receiveShadows": false,
+        "castShadows": false,
+        "isPickable": true
+      },
+      {
+        "type": "model",
+        "position": [
+          100,
+          120,
+          5
+        ],
+        "rotationMode": "degrees",
+        "rotation": [
+          0,
+          25,
+          0
+        ],
+        "animationMode": "none",
+        "animationKeys": [],
+        "size": [
+          10,
+          10,
+          10
+        ],
+        "modelURL": "models/Kenny.nl - Racer/barrierWhite.glb",
+        "modelScale": 95,
+        "modelAnimation": "None",
+        "color": "#80E680",
+        "imageType": "sphere",
+        "imageURL": "",
+        "uScale": 1,
+        "vScale": 1,
+        "physicsOptions": "fixed",
+        "magnetic": false,
+        "laserDetection": null,
+        "ultrasonicDetection": null,
+        "receiveShadows": false,
+        "castShadows": false,
+        "isPickable": true
+      },
+      {
+        "type": "model",
+        "position": [
+          85.56409492779031,
+          95.93980465403332,
+          5
+        ],
+        "rotationMode": "degrees",
+        "rotation": [
+          0,
+          -45,
+          0
+        ],
+        "animationMode": "none",
+        "animationKeys": [],
+        "size": [
+          10,
+          10,
+          10
+        ],
+        "modelURL": "models/Kenny.nl - Racer/barrierWhite.glb",
+        "modelScale": 95,
+        "modelAnimation": "None",
+        "color": "#80E680",
+        "imageType": "sphere",
+        "imageURL": "",
+        "uScale": 1,
+        "vScale": 1,
+        "physicsOptions": "fixed",
+        "magnetic": false,
+        "laserDetection": null,
+        "ultrasonicDetection": null,
+        "receiveShadows": false,
+        "castShadows": false,
+        "isPickable": true
+      },
+      {
+        "type": "model",
+        "position": [
+          97.92378595273485,
+          172.98520241213683,
+          5
+        ],
+        "rotationMode": "degrees",
+        "rotation": [
+          0,
+          55,
+          0
+        ],
+        "animationMode": "none",
+        "animationKeys": [],
+        "size": [
+          10,
+          10,
+          10
+        ],
+        "modelURL": "models/Kenny.nl - Racer/barrierWhite.glb",
+        "modelScale": 95,
+        "modelAnimation": "None",
+        "color": "#80E680",
+        "imageType": "sphere",
+        "imageURL": "",
+        "uScale": 1,
+        "vScale": 1,
+        "physicsOptions": "fixed",
         "magnetic": false,
         "laserDetection": null,
         "ultrasonicDetection": null,
@@ -134,8 +386,8 @@
     "startPosXYZStr": "",
     "startRotStr": "",
     "startPosXYZ": [
-      -29,
-      22,
+      -17,
+      44,
       0
     ],
     "startRot": 0,
