@@ -453,6 +453,10 @@ def main():
                 matrice[i].append(".")
         for i in range(len(robot.us_data)) :
             matrice[robot.us_data[i]["x"]][robot.us_data[i]["y"]] = "X"
+        # position du robot avec des R (us data X Y constant)
+        for i in range(len(robot.us_data)) :
+            matrice[robot.us_data[i]["x"]][robot.position["y"]] = "R"
+
 
         #ecrire dans un fichier le contenu de la matrice
         with open("carte.txt","w") as f :
