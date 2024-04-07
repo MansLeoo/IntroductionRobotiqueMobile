@@ -3,6 +3,7 @@ from ev3dev2.sound   import Sound
 from ev3dev2.motor import *
 from ev3dev2.sensor.lego import *
 from ev3dev2.sensor import INPUT_1, INPUT_2, INPUT_3, INPUT_4
+
 import time
 import math
 import sys
@@ -195,7 +196,8 @@ class Robot :
         tout en faisant des observation a l'aide de ses capteurs.
         """
         SEUIL_NOIR = 20
-        while( not self.isCouleurNoir(SEUIL_NOIR) ) :
+        f = 0
+        while( not self.isCouleurNoir(SEUIL_NOIR) and f < 50  ) :
             # Calcul a faire (etape2)
             self.avancer()
             #print(self.getCouleur())
@@ -203,6 +205,10 @@ class Robot :
             self.set_position(self.position["x"]+1,self.position["y"])
             # maj us data
             self.us_data.append({"x":self.position["x"],"y":self.position["y"] + self.get_us_distance()})
+            f= f + 1
+            print(f)
+            sys.stdout.flush()   
+
 
         print("Ligne d'arrivee atteinte !")
         while(self.isCouleurNoir(SEUIL_NOIR)) :
@@ -340,6 +346,12 @@ class Robot :
         correction = angle_actuel
         # Utilisation de la correction pour ajuster les moteurs
         self.moteurs.on(steering=correction, speed=10)
+    def avancerNo(self):
+        """
+        Permet au robot d'avancer tout en gardant la trajectoire a l'aide du gyroscope.
+        """
+        # Utilisation de la correction pour ajuster les moteurs
+        self.moteurs.on(steering=0, speed=10)
     def reculer(self):
         """
         Permet au robot de reculer tout en gardant la trajectoire a l'aide du gyroscope.
@@ -392,7 +404,78 @@ class Robot :
             smoothed_value = sum(data[start_index:end_index]) / (end_index - start_index)
             smoothed_data.append(smoothed_value)
         return smoothed_data
+    def slalom(self,angle) :
+ # tourner de 90°
+            tank = MoveTank(OUTPUT_A, OUTPUT_B)
 
+            tank.gyro = self.gyroscope
+            tank.turn_degrees(
+                speed=SpeedPercent(5),
+                target_angle=angle
+            )   
+
+            tank.on_for_rotations(10,10,2.69)
+
+            # tourner de - 90          
+            tank.turn_degrees(
+                speed=10,
+                target_angle= -angle
+            )
+            tank.on_for_rotations(10,10,4.89)
+            # tourner de - 90          
+            tank.turn_degrees(
+                speed=10,
+                target_angle= -angle
+            )
+
+            tank.on_for_rotations(10,10,2.69)
+  
+            # tourner de - 90          
+            tank.turn_degrees(
+                speed=10,
+                target_angle= angle
+            )
+    def avancerBriques(self,x1,x2,x3) :
+            f = 0
+            while( f < x1  ) :
+                # Calcul a faire (etape2)
+                self.avancerNo()
+                #print(self.getCouleur())
+                # maj position
+                self.set_position(self.position["x"]+1,self.position["y"])
+                # maj us data
+                self.us_data.append({"x":self.position["x"],"y":self.position["y"] + self.get_us_distance()})
+                f= f + 1
+                print(f)
+                sys.stdout.flush() 
+            self.slalom(90)
+            while( f < x2  ) :
+
+                # Calcul a faire (etape2)
+                self.avancerNo()
+                #print(self.getCouleur())
+                # maj position
+                self.set_position(self.position["x"]+1,self.position["y"])
+                # maj us data
+                self.us_data.append({"x":self.position["x"],"y":self.position["y"] + self.get_us_distance()})
+                f= f + 1
+                print(f)
+                sys.stdout.flush() 
+            self.slalom(-90)
+
+            while( f < x3  ) :
+                # Calcul a faire (etape2)
+                self.avancerNo()
+                #print(self.getCouleur())
+                # maj position
+                self.set_position(self.position["x"]+1,self.position["y"])
+                # maj us data
+                self.us_data.append({"x":self.position["x"],"y":self.position["y"] + self.get_us_distance()})
+                f= f + 1
+                print(f)
+                sys.stdout.flush() 
+            self.slalom(90)
+            self.stop()
 
 def main():
     try :
@@ -402,15 +485,9 @@ def main():
         robot.preparationCouleur()
         robot.preparationRobot()
         robot.preparationGyroscope()
-        robot.avancerLigneDepart()
-        time.sleep(1)
-        robot.set_position(0,0)
-        robot.avancerLigneArrivee()
-        time.sleep(1)
-        robot.move_forward(100)
-        time.sleep(2)
-        robot.reculerLigneDepart()
-        time.sleep(1)
+        # robot.avancerBriques(50,100,150)
+        robot.slalom(90)
+
 
         # Appliquer le lissage aux donnees ultrasoniques
         smoothed_us_data = robot.smooth_data([d["y"] for d in robot.us_data])

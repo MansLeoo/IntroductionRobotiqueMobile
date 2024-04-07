@@ -188,7 +188,9 @@ class Robot :
         print("Ligne d'arrivée atteinte !")
         while(self.isCouleurNoir(SEUIL_NOIR)) :
             self.avancer()
-            print(self.getCouleur())   
+            print(self.getCouleur())
+
+   
         print("Ligne d'arrivée traverse !")
         self.stop()
     def get_moteurGauche(self):
