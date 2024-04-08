@@ -62,6 +62,8 @@ def trouver_briques_lait(carte):
 
 
 carte_array1 = np.array(carte)
+plt.imshow(carte_array1 == 'X', cmap='gray', interpolation='nearest')
+plt.show()
 
 # Mettre à jour la carte avec les briques détectées
 briques = trouver_briques_lait(carte)
@@ -70,9 +72,14 @@ briques = trouver_briques_lait(carte)
 briques = sorted(briques, key=lambda x: x[1])[1:4]
 print(briques)
 
+# Faire un carré de 3x3 autour de chaque brique
 for brique in briques:
     i, j = brique
-    carte[i][j] = "B"
+    for x in range(i - 1, i + 2):
+        for y in range(j - 1, j + 2):
+            carte[x][y] = "B"
+
+
 
 # Convertir la carte en tableau numpy pour affichage
 carte_array = np.array(carte)
