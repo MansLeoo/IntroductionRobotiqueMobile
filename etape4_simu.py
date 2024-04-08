@@ -3,15 +3,12 @@ from ev3dev2.sound   import Sound
 from ev3dev2.motor import *
 from ev3dev2.sensor.lego import *
 from ev3dev2.sensor import INPUT_1, INPUT_2, INPUT_3, INPUT_4
-
 import time
-import math
-import sys
 
 
 class RobotException(Exception):
     """
-    Erreurs liees au Robot
+    Erreurs liées au Robot
     """
     message = ""
     line_number=""
@@ -21,7 +18,7 @@ class RobotException(Exception):
         self.line_number = line_number
 
     def __str__(self):
-        return "Ligne {} RobotException: {}".format(self.line_number, self.message)
+        return f"Ligne {self.line_number} RobotException: {self.message}"
 class Robot :
     moteurGauche = None
     moteurDroite  = None
@@ -31,8 +28,6 @@ class Robot :
     bouton2 = None
     gyroscope = None
     moteurs = None 
-    position = {"x":0,"y":0}
-    us_data = [{"x":0,"y":0}]
     def __init__(self, L_motor1, L_motor2,M_motor,colorSensor,ultrasonSensor,giroSensor,but_1,but_2):
         try :
             if(L_motor1 != None) :
@@ -54,12 +49,12 @@ class Robot :
             if (L_motor1 != None and L_motor2 != None) :
                 self.moteurs = MoveSteering(L_motor1,L_motor2)
         except Exception as e : 
-            line_number = str(e).split(" ")[-1]  # Extraire le numero de ligne de la chaîne de traceback
-            raise RobotException("Erreur lors de la creation de l'objet robot \nErreur: " + str(e),line_number )
+            line_number = str(e).split(" ")[-1]  # Extraire le numéro de ligne de la chaîne de traceback
+            raise RobotException("Erreur lors de la création de l'objet robot \nErreur: " + str(e),line_number )
     
     def preparationCouleur(self) :
         if not self.verificationCapteurCouleur() :
-            raise RobotException("Le robot n'a pas de capteur couleur definis")
+            raise RobotException("Le robot n'a pas de capteur couleur définis")
 
   
         # Calibrage blanc
@@ -70,7 +65,7 @@ class Robot :
         return (r,g,b)
     def isCouleurNoir(self,limite) :
         couleur = self.getCouleur()
-        if (couleur[0] > limite or couleur[1] > limite or couleur[2] > limite) :
+        if (couleur[0] > limite and couleur[1] > limite and couleur[2] > limite) :
             return False
         else :
             return True
@@ -83,159 +78,120 @@ class Robot :
     def preparationGyroscope(self) :
         self.gyroscope.calibrate()
     def move_forward(self,distance_centimeters):
-        self.moteurGauche.run_to_rel_pos(position_sp=distance_centimeters * 5, speed_sp=200, stop_action="hold")
-        self.moteurDroite.run_to_rel_pos(position_sp=distance_centimeters * 5, speed_sp=200, stop_action="hold")
+        self.moteurGauche.run_to_rel_pos(position_sp=distance_centimeters * 5, speed_sp=500, stop_action="hold")
+        self.moteurDroite.run_to_rel_pos(position_sp=distance_centimeters * 5, speed_sp=500, stop_action="hold")
     def verificationCapteurCouleur(self) :
         """
-        Verifie si le capteur de couleur est defini pour l'instance Robot.
+        Vérifie si le capteur de couleur est défini pour l'instance Robot.
 
         Returns:
-            bool: True si le capteur de couleur est defini, False sinon.
+            bool: True si le capteur de couleur est défini, False sinon.
         """
         return True if self.capteurCouleur is not None else False
 
     def verificationCapteurUltrason(self) :
         """
-        Verifie si le capteur ultrasonique est defini pour l'instance Robot.
+        Vérifie si le capteur ultrasonique est défini pour l'instance Robot.
 
         Returns:
-            bool: True si le capteur ultrasonique est defini, False sinon.
+            bool: True si le capteur ultrasonique est défini, False sinon.
         """
         return True if self.capteurUltrason is not None else False
 
     def verificationMoteurDroite(self) :
         """
-        Verifie si le moteur droit est defini pour l'instance Robot.
+        Vérifie si le moteur droit est défini pour l'instance Robot.
 
         Returns:
-            bool: True si le moteur droit est defini, False sinon.
+            bool: True si le moteur droit est défini, False sinon.
         """
         return True if self.moteurDroite is not None else False
 
     def verificationMoteurGauche(self) :
         """
-        Verifie si le moteur gauche est defini pour l'instance Robot.
+        Vérifie si le moteur gauche est défini pour l'instance Robot.
 
         Returns:
-            bool: True si le moteur gauche est defini, False sinon.
+            bool: True si le moteur gauche est défini, False sinon.
         """
         return True if self.moteurGauche is not None else False
 
     def verificationBouton1(self) :
         """
-        Verifie si le bouton 1 est defini pour l'instance Robot.
+        Vérifie si le bouton 1 est défini pour l'instance Robot.
 
         Returns:
-            bool: True si le bouton 1 est defini, False sinon.
+            bool: True si le bouton 1 est défini, False sinon.
         """
         return True if self.bouton1 is not None else False
 
     def verificationBouton2(self) :
         """
-        Verifie si le bouton 2 est defini pour l'instance Robot.
+        Vérifie si le bouton 2 est défini pour l'instance Robot.
 
         Returns:
-            bool: True si le bouton 2 est defini, False sinon.
+            bool: True si le bouton 2 est défini, False sinon.
         """
         return True if self.bouton2 is not None else False
 
     def verificationGyroscope(self) :
         """
-        Verifie si le gyroscope est defini pour l'instance Robot.
+        Vérifie si le gyroscope est défini pour l'instance Robot.
 
         Returns:
-            bool: True si le gyroscope est defini, False sinon.
+            bool: True si le gyroscope est défini, False sinon.
         """
         return True if self.gyroscope is not None else False
-    def tourner(self) :
-        left_motor = self.moteurGauche
-        right_motor = self.moteurDroite
-
-        # Define motor parameters
-        speed = 50  # Speed of the motors
-        turn_duration = 1.2  # Duration to turn (adjust as needed)
-        turn_angle = 90  # Desired turn angle
-
-        # Perform the turn
-        left_motor.on_for_seconds(speed, turn_duration)
-        right_motor.on_for_seconds(-speed, turn_duration)
-
-        # Wait for the turn to complete
-
-        # Stop the motors
-        left_motor.off()
-        right_motor.off()
+  
     def avancerLigneDepart(self) :
         """
-        Permet au robot d'avancer vers la premiere zone noire qu'il detecte.
+        Permet au robot d'avancer vers la première zone noire qu'il détecte.
         """
-        SEUIL_NOIR = 20
+        SEUIL_NOIR = 200
         while( not self.isCouleurNoir(SEUIL_NOIR) ) :
             self.avancer()
-            #print(self.getCouleur())
-            # maj position
-            position_pulse = (self.moteurGauche.position + self.moteurDroite.position) / 2
-            print(position_pulse/20.5)
-            sys.stdout.flush()
-            self.set_position(self.position["x"]+1,self.position["y"])
-            # maj us data
-            self.us_data.append({"x":self.position["x"],"y":self.position["y"] + self.get_us_distance()})
-        print("Ligne de depart atteinte !")
+            print(self.getCouleur())
+        print("Ligne de départ atteinte !")
         while(self.isCouleurNoir(SEUIL_NOIR)) :
             self.avancer()
-            #print(self.getCouleur())   
-        print("Ligne de depart traverse !")
+            print(self.getCouleur())   
+        print("Ligne de départ traverse !")
         self.stop()
     def reculerLigneDepart(self) :
         """
-        Permet au robot de reculer vers la premiere zone noire qu'il detecte,
+        Permet au robot de reculer vers la première zone noire qu'il détecte,
         tout en faisant des observation a l'aide de ses capteurs.
         """
-        SEUIL_NOIR = 20
+        SEUIL_NOIR = 200
         nb_ligne = 0
         while(nb_ligne != 2) :
             while( not self.isCouleurNoir(SEUIL_NOIR) ) :
-                position_pulse = (self.moteurGauche.position + self.moteurDroite.position) / 2
-                print(position_pulse/20.5)
-                sys.stdout.flush()
                 self.reculer()
-                #print(self.getCouleur())
-            print("Ligne de depart atteinte !")
+                print(self.getCouleur())
+            print("Ligne de départ atteinte !")
             while(self.isCouleurNoir(SEUIL_NOIR)) :
                 self.reculer()
-                #print(self.getCouleur())   
-            print("Ligne de depart traverse !")
+                print(self.getCouleur())   
+            print("Ligne de départ traverse !")
             self.stop()
             nb_ligne +=1
     def avancerLigneArrivee(self) :
         """
-        Permet au robot d'avancer vers la seconde zone noire qu'il detecte,
+        Permet au robot d'avancer vers la seconde zone noire qu'il détecte,
         tout en faisant des observation a l'aide de ses capteurs.
         """
-        SEUIL_NOIR = 20
-        f = 0
-        while( not self.isCouleurNoir(SEUIL_NOIR) and f < 50  ) :
+        SEUIL_NOIR = 200
+        while( not self.isCouleurNoir(SEUIL_NOIR) ) :
             # Calcul a faire (etape2)
             self.avancer()
-            #print(self.getCouleur())
-            # maj position
-            self.set_position(self.position["x"]+1,self.position["y"])
-            # maj us data
-            self.us_data.append({"x":self.position["x"],"y":self.position["y"] + self.get_us_distance()})
-            f= f + 1
-            print(f)
-            sys.stdout.flush()   
-
-
-        print("Ligne d'arrivee atteinte !")
+            print(self.getCouleur())
+        print("Ligne d'arrivée atteinte !")
         while(self.isCouleurNoir(SEUIL_NOIR)) :
             self.avancer()
-            position_pulse = (self.moteurGauche.position + self.moteurDroite.position) / 2
-            print(position_pulse/20.5)
-            sys.stdout.flush()   
+            print(self.getCouleur())
 
-            #print(self.getCouleur())   
-        print("Ligne d'arrivee traverse !")
+   
+        print("Ligne d'arrivée traverse !")
         self.stop()
     def get_moteurGauche(self):
         """
@@ -248,10 +204,10 @@ class Robot :
 
     def set_moteurGauche(self, value):
         """
-        Definit le moteur gauche de l'instance Robot.
+        Définit le moteur gauche de l'instance Robot.
 
         Args:
-            value (object): Le moteur gauche a definir.
+            value (object): Le moteur gauche à définir.
         """
         self.moteurGauche = value
 
@@ -266,10 +222,10 @@ class Robot :
 
     def set_moteurDroite(self, value):
         """
-        Definit le moteur droit de l'instance Robot.
+        Définit le moteur droit de l'instance Robot.
 
         Args:
-            value (object): Le moteur droit a definir.
+            value (object): Le moteur droit à définir.
         """
         self.moteurDroite = value
 
@@ -283,10 +239,10 @@ class Robot :
 
     def set_moteurSecondaire(self, value):
         """
-        Definit le moteur secondaire de l'instance Robot.
+        Définit le moteur secondaire de l'instance Robot.
 
         Args:
-            value (object): Le moteur secondaire a definir.
+            value (object): Le moteur secondaire à définir.
         """
         self.moteurSecondaire = value
 
@@ -319,10 +275,10 @@ class Robot :
 
     def set_bouton1(self, value):
         """
-        Definit le bouton 1 de l'instance Robot.
+        Définit le bouton 1 de l'instance Robot.
 
         Args:
-            value (object): Le bouton 1 a definir.
+            value (object): Le bouton 1 à définir.
         """
         self.bouton1 = value
 
@@ -337,10 +293,10 @@ class Robot :
 
     def set_bouton2(self, value):
         """
-        Definit le bouton 2 de l'instance Robot.
+        Définit le bouton 2 de l'instance Robot.
 
         Args:
-            value (object): Le bouton 2 a definir.
+            value (object): Le bouton 2 à définir.
         """
         self.bouton2 = value
 
@@ -359,184 +315,103 @@ class Robot :
         """
         # Lecture de l'angle actuel du gyroscope
         angle_actuel = self.gyroscope.angle
-        # Calcul de la correction a appliquer aux moteurs
+        # Calcul de la correction à appliquer aux moteurs
         correction = angle_actuel
         # Utilisation de la correction pour ajuster les moteurs
-        self.moteurs.on(steering=correction, speed=10)
-    def avancerNo(self):
-        """
-        Permet au robot d'avancer tout en gardant la trajectoire a l'aide du gyroscope.
-        """
-        # Utilisation de la correction pour ajuster les moteurs
-        self.moteurs.on(steering=0, speed=10)
+        self.moteurs.on(steering=correction, speed=70)
     def reculer(self):
         """
         Permet au robot de reculer tout en gardant la trajectoire a l'aide du gyroscope.
         """
         # Lecture de l'angle actuel du gyroscope
         angle_actuel =  - self.gyroscope.angle
-        # Calcul de la correction a appliquer aux moteurs
+        # Calcul de la correction à appliquer aux moteurs
         correction = angle_actuel
         # Utilisation de la correction pour ajuster les moteurs
-        self.moteurs.on(steering=correction, speed=-10)        
+        self.moteurs.on(steering=correction, speed=-70)        
     def stop(self) :
         """
-        Permet de stopper les moteurs permettant les deplacements du robot.
+        Permet de stopper les moteurs permettant les déplacements du robot.
         """
-        self.moteurs.off()
-    def set_position(self, x, y):
-        """
-        Definit la position du robot.
+        self.moteurs.off()    
+    def tourner(self) :
+        left_motor = self.moteurGauche
+        right_motor = self.moteurDroite
 
-        Args:
-            x (int): La coordonnee x.
-            y (int): La coordonnee y.
-        """
-        self.position["x"] = x
-        self.position["y"] = y
-    def get_us_distance(self):
-        """
-        Retourne la distance mesuree par le capteur ultrasonique.
+        # Define motor parameters
+        speed = 20  # Speed of the motors
+        turn_duration = 1  # Duration to turn (adjust as needed)
+        turn_angle = 90  # Desired turn angle
 
-        Returns:
-            int: La distance mesuree par le capteur ultrasonique.
-        """
-        return self.capteurUltrason.distance_centimeters
-    def smooth_data(self, data, window_size=5):
-        """
-        Applique un filtre de moyenne mobile pour lisser les donnees.
+        # Perform the turn
+        left_motor.on_for_seconds(speed, turn_duration)
+        right_motor.on_for_seconds(-speed, turn_duration)
 
-        Args:
-            data (list): Les donnees a lisser.
-            window_size (int): La taille de la fenêtre de moyenne mobile.
+        # Wait for the turn to complete
 
-        Returns:
-            list: Les donnees lissees.
-        """
-        smoothed_data = []
-        half_window = window_size // 2
-        for i in range(len(data)):
-            start_index = max(0, i - half_window)
-            end_index = min(len(data), i + half_window + 1)
-            smoothed_value = sum(data[start_index:end_index]) / (end_index - start_index)
-            smoothed_data.append(smoothed_value)
-        return smoothed_data
-    def slalom(self,angle) :
- # tourner de 90°
-        self.tourner()
+        # Stop the motors
+        left_motor.off()
+        right_motor.off()
+    def slalom(self) :
+        self.tourner_avec_gyroscope(90,10)
+        self.avancerCM(5.5)
+        self.tourner_avec_gyroscope(-90,10)
+        self.avancerCM(11)
+        self.tourner_avec_gyroscope(-90,10)
+        self.avancerCM(10)
+    def avancerCM(self,distance_cm):
+        # Convertir la distance en nombre de rotations
+        rotations = distance_cm / 5.6
+    
+        # Définir la vitesse des moteurs
+        vitesse = 10  # Ajustez selon votre besoin
+        motor_left = self.moteurGauche
+        motor_right = self.moteurDroite
+        # Réinitialiser les encodeurs
+        motor_left.reset()
+        motor_right.reset()
+        steering_drive = MoveSteering(OUTPUT_A, OUTPUT_B)
+    
+        # Faire avancer les moteurs jusqu'à ce que la distance parcourue atteigne la distance désirée
+        steering_drive.on_for_rotations(0,vitesse,rotations)
+    def tourner_avec_gyroscope(self,angle_cible, vitesse_rotation):
+        tank = MoveTank(OUTPUT_A, OUTPUT_B)
 
+        gyro = self.gyroscope
+        # Lecture de l'angle initial
+        angle_initial = gyro.angle
+    
+        # Calcul de l'angle final
+        angle_final = angle_initial + angle_cible
+    
+        if(angle_cible > 0) :
+            # Rotation du robot
+            tank.on(left_speed=vitesse_rotation, right_speed=-vitesse_rotation)
+        else :
+            tank.on(left_speed=-vitesse_rotation, right_speed=vitesse_rotation)
 
-    def avancerBriques(self,x1,x2,x3) :
-            f = 0
-            while( f < x1  ) :
-                # Calcul a faire (etape2)
-                self.avancerNo()
-                #print(self.getCouleur())
-                # maj position
-                self.set_position(self.position["x"]+1,self.position["y"])
-                # maj us data
-                self.us_data.append({"x":self.position["x"],"y":self.position["y"] + self.get_us_distance()})
-                f= f + 1
-                print(f)
-                sys.stdout.flush() 
-            self.slalom(90)
-            while( f < x2  ) :
-
-                # Calcul a faire (etape2)
-                self.avancerNo()
-                #print(self.getCouleur())
-                # maj position
-                self.set_position(self.position["x"]+1,self.position["y"])
-                # maj us data
-                self.us_data.append({"x":self.position["x"],"y":self.position["y"] + self.get_us_distance()})
-                f= f + 1
-                print(f)
-                sys.stdout.flush() 
-            self.slalom(-90)
-
-            while( f < x3  ) :
-                # Calcul a faire (etape2)
-                self.avancerNo()
-                #print(self.getCouleur())
-                # maj position
-                self.set_position(self.position["x"]+1,self.position["y"])
-                # maj us data
-                self.us_data.append({"x":self.position["x"],"y":self.position["y"] + self.get_us_distance()})
-                f= f + 1
-                print(f)
-                sys.stdout.flush() 
-            self.slalom(90)
-            self.stop()
-
+    
+        while True:
+            # Lire l'angle actuel du gyroscope
+            angle_actuel = gyro.angle
+    
+            # Si l'angle actuel atteint ou dépasse l'angle final, arrêter les moteurs
+            if(angle_cible > 0) :
+                if angle_actuel >= angle_final:
+                    tank.off()
+                    break
+            else :
+                if angle_actuel <= angle_final:
+                    tank.off()
+                    break
 def main():
     try :
-        """def __init__(self, L_motor1, L_motor2,M_motor,colorSensor,ultrasonSensor,giroSensor,but_1,but_2):
-"""
-        robot = Robot(OUTPUT_B, OUTPUT_A, None, INPUT_2, INPUT_1,INPUT_4, None, None)
-        robot.preparationCouleur()
+        #(L_motor1, L_motor2,M_motor,colorSensor,ultrasonSensor,giroSensor,but_1,but_2):
+        robot = Robot(OUTPUT_B, OUTPUT_A, None, INPUT_1, INPUT_2,INPUT_3, None, None)
         robot.preparationRobot()
-        robot.preparationGyroscope()
-        # robot.avancerBriques(50,100,150)
-        robot.slalom(90)
-
-
-        # Appliquer le lissage aux donnees ultrasoniques
-        smoothed_us_data = robot.smooth_data([d["y"] for d in robot.us_data])
-
-        # Mise a jour des donnees ultrasoniques lissees dans robot.us_data
-
-        # arrondir les valeurs de us_data
-        for i in range(len(robot.us_data)) :
-            robot.us_data[i]["x"] = round(robot.us_data[i]["x"])
-            robot.us_data[i]["y"] = round(robot.us_data[i]["y"])
-            #print(robot.us_data[i]["y"])
-
-        # Des que y est different ( 10 deecart) on ajoute un point
+        robot.slalom()
         
 
-
-
-        max_y = 0
-        max_x = 0
-        for i in range(len(robot.us_data)) :
-            if robot.us_data[i]["y"] > max_y :
-                max_y = robot.us_data[i]["y"]
-            if robot.us_data[i]["x"] > max_x :
-                max_x = robot.us_data[i]["x"]
-
-
-        
-
-
-        print("max y : " + str(max_y))
-        print("max x : " + str(max_x))
-        print("Matrice de la carte :")
-
-
-        # Creer une matrice de Max-robot.positionX et Max-us_dataY et remplir avec des X aux positions us_data et des . aux autres positions
-        matrice = []
-        for i in range(max_x+1) :
-            matrice.append([])
-            for j in range(max_y+1) :
-                matrice[i].append(".")
-        for i in range(len(robot.us_data)) :
-            matrice[robot.us_data[i]["x"]][robot.us_data[i]["y"]] = "X"
-
-        #ecrire dans un fichier le contenu de la matrice
-        with open("carte.txt","w") as f :
-            for l in range(len(matrice)) :
-                f.write(str(matrice[l]) + "\n")
-        
-            
-        
-
-
-                
-
-
-            
-
-        
     except RobotException as r :
         print("Il y a eu un probleme avec le Robot. Arret de la simulation.")
         print(str(r))
@@ -544,8 +419,9 @@ def main():
         print("Il y a eu un quelconque probleme lors de la simulation. Arret de la simulation")
         print(str(e))
     else :
-        print("La simulation est terminee, il n'y a eu aucun probleme.")
+        print("La simulation est terminée, il n'y a eu aucun problème.")
     return 0
+    #def __init__(self, L_motor1, L_motor2,M_motor,colorSensor,ultrasonSensor,giroSensor,but_1,but_2):
 
 
 
