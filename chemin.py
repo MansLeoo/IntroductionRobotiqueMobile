@@ -11,11 +11,11 @@ def trouver_regions_X(carte):
     visited = set()  # Ensemble pour garder une trace des cellules visitées
 
     def dfs(i, j, region):
-        # Vérifier les limites de la matrice et si la cellule n'a pas été visitée
+        # Vérifie les limites de la matrice et si la cellule n'a pas été visitée
         if 0 <= i < len(carte) and 0 <= j < len(carte[0]) and (i, j) not in visited and carte[i][j] == "X":
             visited.add((i, j))
             region.append((i, j))
-            # Parcourir les cellules adjacentes
+            # Parcour les cellules adjacentes
             dfs(i + 1, j, region)
             dfs(i - 1, j, region)
             dfs(i, j + 1, region)
@@ -45,16 +45,16 @@ def trouver_briques_lait(carte):
                 if dernier_x is None:
                     dernier_x = (i, j)
                 else:
-                    # Vérifiez la différence en x entre le dernier_x et le point actuel
+                    # Vérifie la différence en x entre le dernier_x et le point actuel
                     diff_x = abs(j - dernier_x[1])
 
                     # Si la différence en x est supérieure au seuil, enregistrez le dernier_x comme une nouvelle brique
                     if diff_x >= seuil_x:
                         coordonnees_briques.append(dernier_x)
-                    # Mettez à jour le dernier_x avec le point actuel
+                    # Met à jour le dernier_x avec le point actuel
                     dernier_x = (i, j)
 
-    # Ajoutez le dernier_x rencontré à la liste des briques de lait
+    # Ajoute le dernier_x rencontré à la liste des briques de lait
     if dernier_x is not None:
         coordonnees_briques.append(dernier_x)
 
@@ -65,26 +65,45 @@ carte_array1 = np.array(carte)
 plt.imshow(carte_array1 == 'X', cmap='gray', interpolation='nearest')
 plt.show()
 
-# Mettre à jour la carte avec les briques détectées
+# Met à jour la carte avec les briques détectées
 briques = trouver_briques_lait(carte)
 
 # filtre les 3 premières briques les plus a gauche (x le plus petit) en enlevant la première
 briques = sorted(briques, key=lambda x: x[1])[1:4]
 print(briques)
 
-# Faire un carré de 3x3 autour de chaque brique
+# Fait un carré de 3x3 autour de chaque brique
 for brique in briques:
-    i, j = brique
-    for x in range(i - 1, i + 2):
-        for y in range(j - 1, j + 2):
-            carte[x][y] = "B"
+    for i in range(brique[0] - 1, brique[0] + 2):
+        for j in range(brique[1] - 1, brique[1] + 2):
+            carte[i][j] = "B"
 
-
-
-# Convertir la carte en tableau numpy pour affichage
+# Converti la carte en tableau numpy pour affichage
 carte_array = np.array(carte)
 
-# Afficher la carte
+# Affiche la carte
 plt.imshow(carte_array == 'B', cmap='Reds', interpolation='nearest')
 plt.show()
 
+# Initialise le tracé
+plt.figure()
+
+# Trace la ligne de (0, 0) au premier point
+plt.plot([0, briques[0][1]+10], [0, briques[0][0]-10], 'ro-')
+plt.plot([briques[0][1]+10, briques[1][1]-10], [briques[0][0]-10, briques[1][0]+10], 'ro-')
+plt.plot([briques[1][1]-10, briques[2][1]+10], [briques[1][0]+10, briques[2][0]-10], 'ro-')
+
+
+# Affiche les points
+plt.plot(0, 0, 'bo')  # Point de départ
+for brique in briques:
+    plt.plot(brique[1], brique[0], 'bo')  # Points des briques de lait
+
+# Configurations de l'affichage
+plt.xlabel('Y')
+plt.ylabel('X')
+plt.title('Trajet du slalom')
+plt.grid(True)
+plt.axis('equal')
+plt.gca().invert_yaxis()  # Inverse l'axe vertical
+plt.show()
