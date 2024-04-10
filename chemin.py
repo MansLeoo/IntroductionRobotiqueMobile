@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+"""Certain fichier peuvent être mal formé et ne pas être lus correctement par le programme le fichier carte.txt donner dans le rendu est bien formé"""
 # Lire la carte à partir du fichier
 with open("carte.txt", "r") as file:
     carte = [list(line.strip()) for line in file.readlines()]
